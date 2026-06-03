@@ -56,6 +56,10 @@ def _carte_france_svg(env: Environment, departement: str) -> str:
     if not svg_path.exists():
         return ""
     dep = (departement or "").strip()
+    # Fallback Corse : un CP 20xxx est normalisé en "20" par le backend,
+    # mais le SVG utilise les codes 2A / 2B. On mappe sur 2A par défaut.
+    if dep == "20":
+        dep = "2A"
     svg = env.get_template("carte_france.svg").render(departement=dep)
     if dep:
         # Les paths de département portent id="dep-XX". On ajoute une surbrillance.
