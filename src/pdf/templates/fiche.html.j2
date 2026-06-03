@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm 20mm 16mm;
+    @bottom-center {
+      content: "INVENIO — Fiche de sélection France Air · page " counter(page) "/" counter(pages);
+      font-family: "Inter", sans-serif;
+      font-size: 8pt;
+      color: #8a93a3;
+    }
+  }
+  @page :first { margin: 0; }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Inter", "DejaVu Sans", sans-serif;
+    color: {{ couleurs.encre }};
+    font-size: 10.5pt;
+    line-height: 1.5;
+    margin: 0;
+  }
+  h1, h2, h3 { color: {{ couleurs.bleu_marine }}; font-weight: 700; }
+  h2 {
+    font-size: 15pt;
+    border-bottom: 2px solid {{ couleurs.bleu_electrique }};
+    padding-bottom: 4px;
+    margin-top: 0;
+  }
+  .mono { font-family: "JetBrains Mono", "DejaVu Sans Mono", monospace; }
+  .page-break { page-break-before: always; }
+  a { color: {{ couleurs.bleu_marine }}; text-decoration: none; }
+
+  /* ── 1. Page de garde ── */
+  .cover {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    page-break-after: always;
+    background: {{ couleurs.fond_cover }};
+    overflow: hidden;
+  }
+  .cover img.bg {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .cover .mask {
+    position: absolute; left: 0; right: 0; bottom: 28%;
+    height: 90px; background: {{ couleurs.fond_cover }};
+  }
+  .cover .overlay {
+    position: absolute; left: 18mm; right: 18mm; bottom: 22%;
+  }
+  .cover .overlay .projet {
+    font-size: 30pt; font-weight: 800; color: {{ couleurs.bleu_marine }};
+    line-height: 1.1; margin: 0;
+  }
+  .cover .overlay .sous-titre {
+    font-size: 14pt; color: {{ couleurs.bleu_electrique }};
+    margin-top: 8px; font-weight: 600;
+  }
+  .cover .brand {
+    position: absolute; top: 18mm; left: 18mm;
+    font-size: 12pt; letter-spacing: 3px; font-weight: 700;
+    color: {{ couleurs.bleu_marine }};
+  }
+  .cover .fallback-title {
+    position: absolute; top: 38%; left: 18mm; right: 18mm;
+    font-size: 24pt; font-weight: 800; color: {{ couleurs.bleu_marine }};
+  }
+
+  /* ── Sommaire ── */
+  .toc ol { list-style: none; padding: 0; counter-reset: toc; }
+  .toc li {
+    counter-increment: toc; padding: 8px 0;
+    border-bottom: 1px dashed #cdd5e0; font-size: 12pt;
+  }
+  .toc li::before { content: counter(toc) ". "; color: {{ couleurs.bleu_electrique }}; font-weight: 700; }
+
+  /* ── Tableaux ── */
+  table.data { width: 100%; border-collapse: collapse; margin: 10px 0; }
+  table.data th, table.data td {
+    border: 1px solid #d7dde6; padding: 7px 9px; text-align: left; font-size: 10pt;
+  }
+  table.data th { background: {{ couleurs.bleu_marine }}; color: #fff; font-weight: 600; }
+  table.data tr:nth-child(even) td { background: #f4f7fb; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    background: {{ couleurs.teal }}; color: #fff; font-size: 9pt; font-weight: 700;
+  }
+
+  /* ── Prescription ── */
+  .prescription { text-align: justify; white-space: pre-line; }
+
+  /* ── Plans ── */
+  .plan img { max-width: 100%; max-height: 240mm; display: block; margin: 8px auto; }
+
+  /* ── Contacts ── */
+  .contacts-grid { display: flex; gap: 10px; margin-top: 14px; }
+  .contact-col {
+    flex: 1; border: 1px solid #d7dde6; border-radius: 8px; padding: 10px;
+  }
+  .contact-col h3 {
+    margin: 0 0 6px; font-size: 11pt; color: #fff; background: {{ couleurs.bleu_marine }};
+    padding: 5px 8px; border-radius: 5px;
+  }
+  .contact-col .nom { font-weight: 700; }
+  .contact-col .meta { font-size: 9pt; color: #45506a; }
+  .carte { text-align: center; margin: 6px 0 14px; }
+  .carte svg { max-height: 120mm; }
+  .dep-label { color: {{ couleurs.rouge }}; font-weight: 700; }
+</style>
+</head>
+<body>
+
+{# ── 1. PAGE DE GARDE ── #}
+<div class="cover">
+  {% if cover_uri %}
+    <img class="bg" src="{{ cover_uri }}" alt="" />
+    <div class="mask"></div>
+  {% endif %}
+  <div class="brand">FRANCE AIR · SOLUTION HABITAT</div>
+  {% if not cover_uri %}
+    <div class="fallback-title">{{ machine.modele }} {{ machine.taille }}</div>
+  {% endif %}
+  <div class="overlay">
+    <p class="projet">{{ projet.nom or "Fiche de sélection" }}</p>
+    <div class="sous-titre">
+      {{ machine.modele }} {{ machine.taille }} ·
+      {{ machine.type_machine or "—" }}{% if machine.acoustique %} · {{ machine.acoustique }}{% endif %}
+    </div>
+  </div>
+</div>
+
+{# ── 2. SOMMAIRE ── #}
+<section class="toc">
+  <h2>Sommaire</h2>
+  <ol>
+    <li><a href="#perf">Performances de la machine</a></li>
+    <li><a href="#prescription">Texte de prescription</a></li>
+    <li><a href="#plans">Plans</a></li>
+    <li><a href="#options">Options retenues</a></li>
+    <li><a href="#contacts">Vos contacts France Air</a></li>
+  </ol>
+  <table class="data" style="margin-top:20px">
+    <tr><th>Projet</th><td>{{ projet.nom or "—" }} {% if projet.numero %}(n° {{ projet.numero }}){% endif %}</td></tr>
+    {% if projet.client %}<tr><th>Client</th><td>{{ projet.client.nom }} — {{ projet.client.code_postal }}</td></tr>{% endif %}
+    <tr><th>Machine</th><td class="mono">{{ machine.modele }} {{ machine.taille }} — {{ machine.fluide }} — {{ machine.medium }}</td></tr>
+    <tr><th>Désignation</th><td class="mono">{{ machine.designation or "—" }}</td></tr>
+  </table>
+</section>
+
+{# ── 3. PERFORMANCES ── #}
+<section class="page-break" id="perf">
+  <h2>Performances de la machine</h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Mode</th><th>P. utile (kW)</th><th>P. absorbée (kW)</th>
+        <th>COP</th><th>EER</th><th>SCOP</th><th>SEER</th><th>Classe</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in performances %}
+      <tr>
+        <td><strong>{{ p.mode }}</strong></td>
+        <td>{{ "%.2f"|format(p.puissance_kw) if p.puissance_kw is not none else "—" }}</td>
+        <td>{{ "%.2f"|format(p.puissance_absorbee_kw) if p.puissance_absorbee_kw is not none else "—" }}</td>
+        <td>{{ "%.2f"|format(p.cop) if p.cop is not none else "—" }}</td>
+        <td>{{ "%.2f"|format(p.eer) if p.eer is not none else "—" }}</td>
+        <td>{{ "%.2f"|format(p.scop) if p.scop is not none else "—" }}</td>
+        <td>{{ "%.2f"|format(p.seer) if p.seer is not none else "—" }}</td>
+        <td>{% if p.classe_energetique %}<span class="badge">{{ p.classe_energetique }}</span>{% else %}—{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+{# ── 4. PRESCRIPTION ── #}
+<section class="page-break" id="prescription">
+  <h2>Texte de prescription</h2>
+  {% if texte_prescription %}
+    <p class="prescription">{{ texte_prescription }}</p>
+  {% else %}
+    <p><em>Aucun texte de prescription défini pour le modèle {{ machine.modele }}.
+    À renseigner dans la page Maintenance.</em></p>
+  {% endif %}
+</section>
+
+{# ── 5. PLANS ── #}
+<section class="page-break" id="plans">
+  <h2>Plans</h2>
+  {% if plans_images %}
+    {% for img in plans_images %}<div class="plan"><img src="{{ img }}" alt="Plan" /></div>{% endfor %}
+  {% else %}
+    <p><em>Aucun plan extrait de la fiche GALLETTI.</em></p>
+  {% endif %}
+</section>
+
+{# ── 6. OPTIONS RETENUES ── #}
+<section class="page-break" id="options">
+  <h2>Options retenues</h2>
+  {% if options %}
+  <table class="data">
+    <thead><tr><th>Code</th><th>Libellé</th><th>Catégorie</th><th>Prix</th></tr></thead>
+    <tbody>
+      {% for o in options %}
+      <tr>
+        <td class="mono">{{ o.code }}</td>
+        <td>{{ o.libelle }}{% if o.description %}<br/><span style="font-size:9pt;color:#45506a">{{ o.description }}</span>{% endif %}</td>
+        <td>{{ o.categorie or "—" }}</td>
+        <td>{{ "%.2f €"|format(o.prix) if o.prix is not none else "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p><em>Aucune option retenue.</em></p>
+  {% endif %}
+</section>
+
+{# ── 7. CONTACTS ── #}
+{% include "contacts.html.j2" %}
+
+</body>
+</html>

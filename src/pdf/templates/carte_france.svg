@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Carte de France simplifiée (silhouette "Hexagone").
+  REMPLAÇABLE : pour une carte départementale précise, déposer ici un SVG
+  dont chaque département porte id="dep-XX" (ex. id="dep-69"). Le générateur
+  ajoute automatiquement la classe .dep-actif et une couleur rouge au
+  département du client. Ce placeholder affiche simplement un repère.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 420" width="320" height="336">
+  <defs>
+    <style>
+      .terre { fill:#e8eef5; stroke:#2f4a6f; stroke-width:2; }
+      .dep-actif { fill:#d62828 !important; }
+      .marker { fill:#d62828; }
+      .marker-ring { fill:none; stroke:#d62828; stroke-width:3; opacity:.5; }
+      .dep-num { fill:#ffffff; font-family:'Inter',sans-serif; font-weight:700; font-size:18px; text-anchor:middle; }
+      .legende { fill:#2f4a6f; font-family:'Inter',sans-serif; font-size:13px; text-anchor:middle; }
+    </style>
+  </defs>
+
+  <!-- Silhouette stylisée de la France métropolitaine -->
+  <path class="terre" d="
+    M120,40 L190,30 L210,55 L255,50 L280,85 L320,95 L335,140
+    L300,175 L320,215 L300,255 L325,295 L300,330 L255,355
+    L235,400 L200,390 L185,360 L150,365 L120,335 L95,345
+    L70,310 L90,270 L60,240 L80,200 L55,165 L80,120 L100,90 Z" />
+
+  <!-- Repère central : position symbolique du département client -->
+  <g transform="translate(200,210)">
+    <circle class="marker-ring" r="34" />
+    <circle class="marker-ring" r="24" />
+    <circle class="marker" r="16" />
+    <text class="dep-num" id="dep-marker" y="6">{{ departement or "" }}</text>
+  </g>
+  <text class="legende" x="200" y="412">Département du client</text>
+</svg>
