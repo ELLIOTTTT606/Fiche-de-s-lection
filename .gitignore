@@ -17,6 +17,9 @@ ui/node_modules/
 
 # Build — NOTE : ui/dist est forcé dans git (git add -f) pour Vercel
 # voir README §Déploiement
+# Les covers ne sont PAS dupliquées dans dist (~73 Mo) : FastAPI les sert
+# depuis ui/public/covers via le mount /covers (voir src/api/_static.py).
+ui/dist/covers/
 
 # OS / IDE
 .DS_Store

@@ -20,6 +20,13 @@ def test_libelles_tolerant_sans_baserow():
     assert isinstance(resp.json(), dict)
 
 
+def test_cover_servie_depuis_public():
+    # Les pages de garde sont servies depuis ui/public/covers via /covers.
+    resp = client.get("/covers/PLP_52.png")
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "image/png"
+
+
 def test_decode_designation_endpoint():
     resp = client.post("/api/designation/decode", json={"designation": "VLS254HS0B A000C00020G010I"})
     assert resp.status_code == 200
