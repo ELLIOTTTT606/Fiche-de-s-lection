@@ -23,7 +23,7 @@ class ModeleInfo:
 CATALOGUE: dict[str, ModeleInfo] = {
     "PLP": ModeleInfo("PLP", "R290", "air/eau", ("37", "45", "52", "57", "62")),
     "PLN": ModeleInfo("PLN", "R290", "air/eau", ("52", "72", "82", "104", "114", "134", "154")),
-    "MLI": ModeleInfo("MLI", "R32", "air/eau", ("06", "08", "10", "12", "16", "18", "26", "30")),
+    "MLI": ModeleInfo("MLI", "R32", "air/eau", ("06", "08", "10", "12", "16", "18", "22", "26", "30")),
     "PLE": ModeleInfo(
         "PLE", "R454B", "air/eau",
         ("52", "62", "72", "82", "92", "102", "122", "132", "142", "152"),
@@ -32,7 +32,7 @@ CATALOGUE: dict[str, ModeleInfo] = {
     "GLE": ModeleInfo("GLE", "R454B", "air/eau", ("658", "748", "818", "900", "942", "1072")),
     "VLS": ModeleInfo(
         "VLS", "R454B", "air/eau",
-        ("162", "202", "234", "254", "274", "314", "344", "374", "414", "456", "576"),
+        ("162", "202", "234", "254", "274", "314", "344", "374", "414", "456", "546", "576"),
     ),
     "VRS": ModeleInfo(
         "VRS", "R410A", "air/eau",
@@ -40,8 +40,8 @@ CATALOGUE: dict[str, ModeleInfo] = {
     ),
     "MPE": ModeleInfo(
         "MPE", "R410A", "air/eau",
-        ("04", "05", "08", "09", "10", "13", "14", "15", "18", "21", "24", "27", "28", "30",
-         "35", "40", "42", "54", "61", "66", "69", "76"),
+        ("04", "05", "07", "08", "09", "10", "13", "14", "15", "18", "20", "21", "24", "27",
+         "28", "30", "32", "34", "35", "40", "42", "54", "61", "66", "69", "76"),
     ),
     "MPED": ModeleInfo(
         "MPED", "R410A", "air/eau",
@@ -84,8 +84,11 @@ def normaliser_taille(taille: str, modele: str | None = None) -> str:
         sans_zero = taille.lstrip("0") or "0"
         if sans_zero in valides:
             return sans_zero
-        # Certains modèles ont des tailles à 2 chiffres avec zéro (06, 08...).
-        # On garde alors la forme paddée si elle existe au catalogue.
+        # Certains modèles ont des tailles paddées sur 2 chiffres (07, 08, 09…).
+        # La suppression des zéros de tête peut en retirer un de trop ("007" -> "7") :
+        # on teste alors la forme paddée à 2 chiffres avant d'abandonner.
+        if sans_zero.zfill(2) in valides:
+            return sans_zero.zfill(2)
         return sans_zero
 
     return taille.lstrip("0") or taille
