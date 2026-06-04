@@ -1,0 +1,42 @@
+{# Page contacts : carte de France + 3 colonnes TCI / TCS / Solution #}
+<section class="page-break" id="contacts">
+  <h2>Vos contacts France Air</h2>
+
+  {% if departement %}
+    <p>Département du client : <span class="dep-label mono">{{ departement }}</span></p>
+  {% endif %}
+
+  {% if carte_svg %}
+    <div class="carte">{{ carte_svg|safe }}</div>
+  {% endif %}
+
+  <div class="contacts-grid">
+    <div class="contact-col">
+      <h3>TCI</h3>
+      {% for c in tci %}
+        <div class="nom">{{ c.nom }}</div>
+        <div class="meta">{{ c.telephone }}{% if c.telephone and c.email %} · {% endif %}{{ c.email }}</div>
+      {% else %}
+        <div class="meta"><em>—</em></div>
+      {% endfor %}
+    </div>
+    <div class="contact-col">
+      <h3>TCS</h3>
+      {% for c in tcs %}
+        <div class="nom">{{ c.nom }}</div>
+        <div class="meta">{{ c.telephone }}{% if c.telephone and c.email %} · {% endif %}{{ c.email }}</div>
+      {% else %}
+        <div class="meta"><em>—</em></div>
+      {% endfor %}
+    </div>
+    <div class="contact-col">
+      <h3>Contact Solution</h3>
+      {% for c in solution %}
+        <div class="nom">{{ c.nom }}</div>
+        <div class="meta">{{ c.telephone }}{% if c.telephone and c.email %} · {% endif %}{{ c.email }}</div>
+      {% else %}
+        <div class="meta"><em>—</em></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
